@@ -1,3 +1,3 @@
 # SweetNetworking
 
-easier virtual networking written is swift
+easier virtual networking written in swift
