@@ -9,7 +9,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.6.1"),
-        .package(url: "https://github.com/swiftlang/swift-subprocess.git", revision: "f9881e5"),
+        .package(url: "https://github.com/swiftlang/swift-subprocess.git", revision: "3cc99d0"),
     ],
     targets: [
         .executableTarget(
