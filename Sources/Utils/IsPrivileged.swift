@@ -1,6 +1,6 @@
 import Foundation
 
-struct isPrivileged {
+struct IsPrivileged {
     static func isPrivilegedEnvironment() -> Bool {
         guard ProcessInfo.processInfo.environment["SUDO_COMMAND"] != nil else { return false }
         guard ProcessInfo.processInfo.environment["SUDO_USER"] != nil else { return false }
