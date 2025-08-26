@@ -1,4 +1,4 @@
-import Subprocess
+import Foundation
 
 struct Terminal {
     enum Colours: String {
@@ -14,11 +14,7 @@ struct Terminal {
         case underline = "\u{001B}[4m"
     }
 
-    static func pretty(
-        _ text: String, 
-        colour: Terminal.Colours = .none, 
-        style: Terminal.Style = .none,
-    ) -> String{
+    static func pretty(_ text: String, colour: Terminal.Colours = .none, style: Terminal.Style = .none) -> String{
         var output: String
         output = "\u{001B}[0m"
         output += style.rawValue
@@ -26,5 +22,15 @@ struct Terminal {
         output += text
         output += "\u{001B}[0m"
         return output
+    }
+
+    static func openLine(_ text: String) {
+        print("\r\(text)", terminator: "")
+        fflush(stdout)
+    }
+
+    static func closeLine() {
+        print("")
+        fflush(stdout)
     }
 }
