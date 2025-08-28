@@ -7,9 +7,9 @@ struct SweetNetworking: ParsableCommand {
         version: "0.1.0",
         shouldDisplay: true,
         subcommands: [
-            Live.self,
-            Draft.self,
-            Systemd.self,
+            SweetNetworking.Live.self,
+            SweetNetworking.Draft.self,
+            SweetNetworking.Systemd.self,
         ],
     )
 }
