@@ -8,7 +8,7 @@ extension SweetNetworking {
         )
 
         func validate() throws {
-            try IsPrivileged.validate()
+            try Validation.privilegedValidate()
         }
     }
 }

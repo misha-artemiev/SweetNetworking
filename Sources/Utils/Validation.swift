@@ -1,7 +1,7 @@
 import Foundation
 import ArgumentParser
 
-struct IsPrivileged {
+struct Validation {
     static func isPrivilegedEnvironment() -> Bool {
         guard ProcessInfo.processInfo.environment["SUDO_COMMAND"] != nil else { return false }
         guard ProcessInfo.processInfo.environment["SUDO_USER"] != nil else { return false }
@@ -10,9 +10,9 @@ struct IsPrivileged {
         return true       
     }
 
-    static func validate() throws {
+    static func privilegedValidate() throws {
         guard isPrivilegedEnvironment() else {
-            throw ValidationError("this command must be executed privileged")
+            throw ValidationError(Terminal.pretty("this command must be executed privileged", colour: .red))
         }
         return
     }
