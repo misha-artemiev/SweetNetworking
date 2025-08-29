@@ -10,6 +10,11 @@ struct Runner {
     }
 
     struct NetworkNamespace {
+        enum State {
+            case up
+            case down
+        }
+
         static func create(name: String) async {
             let configuration = Subprocess.Configuration(
                 executable: .name("ip"),
@@ -51,38 +56,67 @@ struct Runner {
             } catch { return "" }
         }
 
-        static func move() {
-        
-        }
-    }
-
-    struct VirtualEthernet {
-        enum virtualEthernetPair {
-            case start
-            case end
-        }
-
-        static func create(startName: String, endName: String, startNS: String, endNS: String) async {
+        static func allow(user: String, nameNS: String) async {
             let configuration = Subprocess.Configuration(
-                executable: .name("ip"),
+                executable: .name("chown"),
                 arguments: Arguments([
-                    "link", 
-                    "add", 
-                    startName, 
-                    "netns", 
-                    startNS, 
-                    "type", 
-                    "veth", 
-                    "peer", 
-                    "name", 
-                    endName, 
-                    "netns", 
-                    endNS
+                    "\(user):\(user)",
+                    "/var/run/netns/\(nameNS)"
                 ])
             )
             do {
                 _ = try await Runner.run(configuration)
             } catch {}
+        }
+
+        static func state(nameNS: String, state: NetworkNamespace.State) async {
+            var loState: String
+            switch state {
+                case .up:
+                    loState = "up"
+                case .down:
+                    loState = "down"
+            }
+            let configuration = Subprocess.Configuration(
+                executable: .name("ip"),
+                arguments: Arguments([
+                    "-n \(nameNS)",
+                    "link",
+                    "set",
+                    "lo",
+                    loState
+                ])
+            )
+            do {
+                _ = try await Runner.run(configuration)
+            } catch {}
+        }
+    }
+
+    struct VirtualEthernetPair {
+        enum State {
+            case up
+            case down
+        }
+
+        static func create(tailName: String, tailPeerName: String) async {
+            let configuration = Subprocess.Configuration(
+                executable: .name("ip"),
+                arguments: Arguments([
+                    "link", 
+                    "add", 
+                    tailName, 
+                    "type", 
+                    "veth", 
+                    "peer", 
+                    "name", 
+                    tailPeerName, 
+                ])
+            )
+            do {
+                _ = try await Runner.run(configuration)
+            } catch {}
+
         }
 
         static func remove() {
@@ -91,6 +125,44 @@ struct Runner {
 
         static func list() {
 
+        }
+
+        static func state(tailName: String, tailNS: String, state: VirtualEthernetPair.State) async {
+            var tailState: String
+            switch state {
+                case .up:
+                    tailState = "up"
+                case .down:
+                    tailState = "down"
+            }
+            let configuration = Subprocess.Configuration(
+                executable: .name("ip"),
+                arguments: Arguments([
+                    "-n \(tailNS)",
+                    "link",
+                    "set",
+                    tailName,
+                    tailState
+                ])
+            )
+            do {
+                _ = try await Runner.run(configuration)
+            } catch {}
+        }
+
+        static func setNS(tailName: String, tailNS: String) async {
+            let configuration = Subprocess.Configuration(
+                executable: .name("ip"),
+                arguments: Arguments([
+                    "link",
+                    tailName,
+                    "netns",
+                    tailNS
+                ])
+            )
+            do {
+                _ = try await Runner.run(configuration)
+            } catch {}
         }
     }
 
